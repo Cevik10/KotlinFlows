@@ -13,12 +13,6 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-
-    init {
-        collectInViewModel()
-    }
-
-
     val countDownTimerFlow = flow<Int> {
         val countDownFrom = 10
         var counter = countDownFrom
@@ -29,6 +23,10 @@ class MainViewModel : ViewModel() {
             counter--
             emit(counter)
         }
+    }
+
+    init {
+        collectInViewModel()
     }
 
 
