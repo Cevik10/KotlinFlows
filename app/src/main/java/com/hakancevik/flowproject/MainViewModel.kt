@@ -1,56 +1,43 @@
 package com.hakancevik.flowproject
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
+    //LiveData comparison
 
-    init {
-        collectInViewModel()
+    private val _liveData = MutableLiveData<String>("KotlinLiveData")
+    val liveData: LiveData<String> = _liveData
+
+    fun changeLiveDataValue() {
+        _liveData.value = "Live Data"
     }
 
 
-    val countDownTimerFlow = flow<Int> {
-        val countDownFrom = 10
-        var counter = countDownFrom
-        emit(countDownFrom)
+    private val _stateFlow = MutableStateFlow("KotlinStateFlow")
+    val stateFlow = _stateFlow.asStateFlow()
 
-        while (counter > 0) {
-            delay(1000)
-            counter--
-            emit(counter)
-        }
+    fun changeStateFlowValue() {
+        _stateFlow.value = "State Flow"
     }
 
 
-    private fun collectInViewModel() {
+    //SharedFlow is highly configurable version of stateFlow.
+    private val _sharedFlow = MutableSharedFlow<String>()
+    val sharedFlow = _sharedFlow.asSharedFlow()
+
+    fun changeSharedFlowValue() {
         viewModelScope.launch {
-            countDownTimerFlow
-                .filter {
-                    it % 3 == 0
-                }
-                .map {
-                    it * it
-                }
-                .collect {
-                    println("value: $it")
-                }
+            _sharedFlow.emit("Shared Flow")
         }
-    }
-
-    private fun collectInViewModel2() {
-        countDownTimerFlow.onEach {
-            println(it)
-        }.launchIn(viewModelScope)
     }
 
 
